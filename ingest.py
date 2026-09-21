@@ -21,6 +21,33 @@ class Document:
     text: str
 
 
+_FRONTMATTER = re.compile(r"^---\n.*?\n---\n\s*", re.DOTALL)
+_TOC_LINE = re.compile(r"^\s*-\s*\[[^\]]+\]\(#")
+
+
+def _strip_frontmatter_and_toc(text: str) -> str:
+    """
+    irs_tax documents open with a YAML frontmatter block, then a table of
+    contents made entirely of bare anchor links (`- [Reminders](#...)`).
+    Neither has any answerable content, and left in, ~1 in 10 chunks turns
+    out to be pure nav-link noise. Both are structurally distinctive enough
+    to strip generically rather than per-file.
+    """
+    match = _FRONTMATTER.match(text)
+    if not match:
+        return text
+
+    lines = text[match.end() :].split("\n")
+    last_toc_line = -1
+    for i, line in enumerate(lines):
+        if _TOC_LINE.match(line):
+            last_toc_line = i
+        elif line.strip() != "":
+            break
+
+    return "\n".join(lines[last_toc_line + 1 :]).strip()
+
+
 def clean_text(raw: str) -> str:
     """
     Strip the stuff that isn't the real content.
@@ -36,6 +63,8 @@ def clean_text(raw: str) -> str:
 
     # Collapse repeated spaces and tabs, but keep line structure intact.
     text = re.sub(r"[ \t]{2,}", " ", text)
+
+    text = _strip_frontmatter_and_toc(text)
 
     return text.strip()
 

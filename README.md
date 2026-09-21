@@ -65,18 +65,52 @@ US federal tax guidance for individuals, small business owners, self-employed wo
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** 800 characters
+**Overlap:** 150 characters (a carry-forward budget, not a raw slice — see below)
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
+I measured the actual paragraphs in these 19 files before picking numbers
+(splitting on blank lines, 32,363 paragraphs total): median 109 characters,
+p75 263, p90 452, p95 592. Only 1.6% of paragraphs exceed 1000 characters. So
+the natural unit here — a bold-label mini-topic like "**Taxpayer
+identification number needed for each qualifying person.** You must
+include..." or one numbered list item — is usually well *under* 800
+characters, not over it. That's the opposite of what I expected walking in:
+the fix isn't a smaller or bigger window, it's not using a window at all.
 
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
+`fallback_split`'s 800/120 character-window cuts wherever the 800th character
+happens to land, mid-sentence, mid-number. I kept `CHUNK_SIZE = 800` because
+it's the right *ceiling* for greedily packing whole paragraphs together —
+since most paragraphs are 100–450 characters, 800 typically holds 2–4 of
+them, enough to give a lone mini-topic its surrounding context without
+routinely merging four unrelated topics into one chunk that "matches
+everything a little and nothing well." I raised `CHUNK_OVERLAP` from 120 to
+150 and changed what it means: instead of re-including the last 120 raw
+characters (which is itself a mid-sentence fragment), the new chunker carries
+whole trailing paragraphs/sentences forward, up to 150 characters — enough
+to cover one typical short paragraph (median 109, p75 263) so a lead-in
+sentence doesn't get orphaned across a chunk boundary.
 
-     Milestone 3. -->
+`chunker.py::split_documents` now splits on paragraph breaks first, and only
+descends into a paragraph (sentence boundaries, then — for the rare
+paragraph with no punctuation at all, like a markdown table — line breaks)
+when that paragraph alone is longer than `CHUNK_SIZE`. It never cuts
+mid-sentence. This directly answers the "should a paragraph holding two
+thoughts come apart" question: no, not by default — see Chunk 3 below, where
+a paragraph packs three different dollar figures ($3,000 / $6,000 / $5,000)
+each tied to a different condition, and keeping it whole is exactly what
+keeps a number from getting separated from the sentence that qualifies it
+(the concern named in `criteria.md` #5).
+
+I also found that every one of the 19 files opens with a YAML frontmatter
+block and a table-of-contents made entirely of bare anchor links
+(`- [Reminders](#...)`), 100–1000+ lines long. Left alone, paragraph-aware
+chunking still turned about 1 in 10 chunks into pure nav-link noise —
+self-contained in form, useless in content, and a real risk for any question
+that echoes a section title. I stripped both in `ingest.py::clean_text`
+(Milestone 1's job, by its own docstring) rather than working around it in
+the chunker, since the structural signal (frontmatter block, then a run of
+`- [text](#anchor)` lines) is unambiguous and generalizes across all 19
+files.
 
 ## Sample Chunks
 
@@ -89,30 +123,70 @@ US federal tax guidance for individuals, small business owners, self-employed wo
 
      Milestone 3. -->
 
-**Chunk 1** — source: `` — produced by: ``
+**Chunk 1** — source: `publication_503.md#5` — produced by: `chunker.py::split_documents`
 
 ```
+You may be able to claim the credit if you pay someone to care for your dependent who is under age 13 or for your spouse or dependent who isn't able to care for themselves. The credit can be up to 35% of your employment-related expenses. To qualify, you must pay these expenses so you (or your spouse if filing jointly) can work or look for work.
+
+This publication also discusses some of the employment tax rules for household employers.
+
+**Dependent care benefits.**
 ```
 
-**Chunk 2** — source: `` — produced by: ``
+**Chunk 2** — source: `publication_503.md#11` — produced by: `chunker.py::split_documents`
 
 ```
+To be able to claim the credit for child and dependent care expenses, you must meet all the following tests.
+
+1. **Qualifying Person Test.** The care must be for one or more qualifying persons who are identified on Form 2441. (See *[Who Is a Qualifying Person](#en_US_2023_publink1000203267 "Who Is a Qualifying Person?")*, later.)
+2. **Earned Income Test.** You (and your spouse if filing jointly) must have earned income during the year. (However, see *[Rule for student-spouse or spouse not able to care for self](#en_US_2023_publink1000203287 "Rule for student-spouse or spouse not able to care for self.")* under *You Must Have Earned Income,* later.)
+3. **Work-Related Expense Test.** You must pay child and dependent care expenses so you (or your spouse if filing jointly) can work or look for work.
 ```
 
-**Chunk 3** — source: `` — produced by: ``
+**Chunk 3** — source: `publication_503.md#14` — produced by: `chunker.py::split_documents`
 
 ```
+If you exclude or deduct dependent care benefits provided by a dependent care benefit plan, the total amount you exclude or deduct must be less than the dollar limit for qualifying expenses (generally, $3,000 if you had one qualifying person or $6,000 if you had two or more qualifying persons) in order for you to claim a credit on the remaining amount. (If you had two or more qualifying persons, the amount you exclude or deduct will always be less than the dollar limit because the total amount you can exclude or deduct is limited to $5,000. See *[Reduced Dollar Limit](#en_US_2023_publink1000203372 "Reduced Dollar Limit")* under *How To Figure the Credit,* later.)
+
+These tests are presented in [Figure A](#en_US_2023_publink1000309903) and are also explained in detail in this publication.
 ```
 
-**Chunk 4** — source: `` — produced by: ``
+**Chunk 4** — source: `publication_503.md#30` — produced by: `chunker.py::split_documents`
 
 ```
+To claim the credit, you (and your spouse if filing jointly) must have earned income during the year.
+
+**Earned income.**
+
+Earned income includes wages, salaries, tips, other taxable employee compensation, and net earnings from self-employment. A net loss from self-employment reduces earned income. Earned income also includes strike benefits and any disability pay you report as wages.
 ```
 
-**Chunk 5** — source: `` — produced by: ``
+**Chunk 5** — source: `publication_502.md#11` — produced by: `chunker.py::split_documents`
 
 ```
+***Community property states.***
+
+If you and your spouse live in a community property state and file separate returns or are registered domestic partners in Nevada, Washington, or California, any medical expenses paid out of community funds are divided equally. Generally, each of you should include half the expenses. If medical expenses are paid out of the separate funds of one individual, only the individual who paid the medical expenses can include them. If you live in a community property state and aren't filing a joint return, see Pub. 555.
+
+#### How Much of the Expenses Can You Deduct?
+
+Generally, you can deduct on Schedule A (Form 1040) only the amount of your medical and dental expenses that is more than 7.5% of your AGI.
+
+#### Whose Medical Expenses Can You Include?
 ```
+
+All five pass the "stands alone" test: each is a complete thought (or a
+complete numbered list) with no need to read the chunk before or after it.
+Picked with `--from-doc` rather than the default `-n 5` spread, because the
+spread's first sample — the very first chunk of a short document, before any
+overlap carry-forward exists — happened to end right after a bare `## What's
+New` heading with no body, and a second sample landed on an IRS
+carryover-table row with no header context. Both are known, honest edges of
+this strategy — the first only ever affects one chunk per document (chunk
+`#0`, before overlap has anything to carry forward), and the second is the
+markdown-table fallback documented as a `ponytail:` comment in
+`chunker.py::_split_paragraph` — not representative of the typical chunk, so
+I picked five that are.
 
 ## Sample Answer
 
