@@ -65,8 +65,31 @@ you're checking that it runs at all and that your key works.
 To use a different corpus:
 
 ```bash
-python app.py --corpus city_guides index
-python app.py --corpus city_guides ask "how do I get to Kestrelford?"
+python app.py --corpus irs_tax index
+python app.py --corpus irs_tax ask "2025 standard mileage rate for business?"
+```
+
+You will see something like the following:
+
+```
+Corpus: irs_tax
+  loaded   19 documents, 7,278,254 characters, ~383,066 characters per document
+  chunked  10714 chunks, 798 characters on average (shortest 1, longest 800), produced bychunker.py::fallback_split
+  embedding 10714 chunks (first run downloads the model)...
+  stored   10714 chunks in 214.4s
+
+Ready. Try: python app.py ask "your question here"
+```
+
+```
+$ python app.py index
+Corpus: irs_tax
+  loaded   19 documents, 7,278,254 characters, ~383,066 characters per document
+  chunked  10714 chunks, 798 characters on average (shortest 1, longest 800), produced bychunker.py::fallback_split
+  embedding 10714 chunks (first run downloads the model)...
+  stored   10714 chunks in 214.4s
+
+Ready. Try: python app.py ask "your question here"
 ```
 
 Or set `CORPUS` in `config.py` once and stop typing it. **Re-run `index` after

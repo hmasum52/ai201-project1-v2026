@@ -1,6 +1,6 @@
 # The Unofficial Guide
 
-<!-- Replace this line with your name and which corpus you picked. -->
+I have used my own corpus of 20 IRS publications to build a retrieval-augmented generation (RAG) system that answers plain-language US federal tax questions. The system retrieves relevant chunks from the corpus and generates structured answers with exact source citations.
 
 > **This file is your submission.** Fill it in as you go — most sections get
 > written during the milestone that produces them, not at the end.
@@ -26,6 +26,42 @@
      this repo.
 
      Milestone 5. -->
+A retrieval-augmented generation (RAG) system that answers plain-language US federal tax questions, grounded in 20 authoritative IRS publications. Ask a question, get a structured answer with exact source citations.
+
+---
+
+### Domain
+
+US federal tax guidance for individuals, small business owners, self-employed workers, farmers, and foreign nationals — sourced from 20 IRS publications spanning standard deductions, medical expenses, depreciation, home office rules, and international tax treaties. The information is technically public but practically inaccessible: answers are fragmented across dozens of long, dense PDFs, and finding the right one requires already knowing which publication covers your situation. This system lets users ask plain-language tax questions and get responses grounded directly in the authoritative IRS source documents.
+
+---
+
+### Document Sources
+
+| # | Source | Type | URL or file path |
+|---|--------|------|-----------------|
+| 1 | IRS Publication 17 — Your Federal Income Tax | IRS Publication | https://www.irs.gov/publications/p17 |
+| 2 | IRS Publication 334 — Tax Guide for Small Business | IRS Publication | https://www.irs.gov/publications/p334 |
+| 3 | IRS Publication 463 — Travel, Gift, and Car Expenses | IRS Publication | https://www.irs.gov/publications/p463 |
+| 4 | IRS Publication 505 — Tax Withholding and Estimated Tax | IRS Publication | https://www.irs.gov/publications/p505 |
+| 5 | IRS Publication 583 — Starting a Business and Keeping Records | IRS Publication | https://www.irs.gov/publications/p583 |
+| 6 | IRS Publication 587 — Business Use of Your Home | IRS Publication | https://www.irs.gov/publications/p587 |
+| 7 | IRS Publication 946 — How to Depreciate Property | IRS Publication | https://www.irs.gov/publications/p946 |
+| 8 | IRS Publication 15 — Employer's Tax Guide (Circular E) | IRS Publication | https://www.irs.gov/publications/p15 |
+| 9 | IRS Publication 15-T — Federal Income Tax Withholding Methods | IRS Publication | https://www.irs.gov/publications/p15t |
+| 10 | IRS Publication 501 — Dependents, Standard Deduction, and Filing Information | IRS Publication | https://www.irs.gov/publications/p501 |
+| 11 | IRS Publication 502 — Medical and Dental Expenses | IRS Publication | https://www.irs.gov/publications/p502 |
+| 12 | IRS Publication 503 — Child and Dependent Care Expenses | IRS Publication | https://www.irs.gov/publications/p503 |
+| 13 | IRS Publication 54 — Tax Guide for U.S. Citizens and Resident Aliens Abroad | IRS Publication | https://www.irs.gov/publications/p54 |
+| 14 | IRS Publication 519 — U.S. Tax Guide for Aliens | IRS Publication | https://www.irs.gov/publications/p519 |
+| 15 | IRS Publication 515 — Withholding of Tax on Nonresident Aliens and Foreign Entities | IRS Publication | https://www.irs.gov/publications/p515 |
+| 16 | IRS Publication 901 — U.S. Tax Treaties | IRS Publication | https://www.irs.gov/publications/p901 |
+| 17 | IRS Publication 514 — Foreign Tax Credit for Individuals | IRS Publication | https://www.irs.gov/publications/p514 |
+| 18 | IRS Publication 570 — Tax Guide for Individuals With Income From U.S. Possessions | IRS Publication | https://www.irs.gov/publications/p570 |
+| 19 | IRS Publication 225 — Farmer's Tax Guide | IRS Publication | https://www.irs.gov/publications/p225 |
+| 20 | IRS Publication 1915 — Understanding Your IRS Individual Taxpayer Identification Number (ITIN) | IRS Publication | https://www.irs.gov/publications/p1915 |
+
+---
 
 ## Chunking Strategy
 
