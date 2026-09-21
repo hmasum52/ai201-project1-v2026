@@ -190,30 +190,41 @@ I picked five that are.
 
 ## Sample Answer
 
-<!-- One complete question and answer, pasted as text, with the source line
-     visible. Milestone 4. -->
-
-**Question:**
+**Question:** What is the 2025 standard mileage rate for business use?
 
 **Answer:**
 
 ```
+For 2025, the standard mileage rate for business use is 70 cents ($0.70) per mile.
+
+This is mentioned in publication_463.md, publication_225.md, and publication_334.md.
+
+Sources retrieved: publication_225.md, publication_334.md, publication_463.md
 ```
 
 **My relevance cutoff:**
 
-<!-- The number you set in config.py, and how you got there.
-
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
-
-     Milestone 4. -->
+I set `THRESHOLD = 0.5` in config.py. I ran `python app.py retrieve` on all
+five `QUESTIONS` and all five `OUT_OF_SCOPE` questions and recorded the best
+(lowest) distance for each. The in-corpus questions came back between 0.189
+and 0.403; the out-of-scope ones came back between 0.642 and 0.795. That's a
+clean gap from 0.403 to 0.642 with nothing in it, so I put the cutoff at 0.5
+— roughly the midpoint, giving about a 0.1 margin on either side. The
+starter's default of 0.6 also happened to fall inside this gap, but 0.5 sits
+more centrally.
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| What is the 2025 standard mileage rate for business use? | yes | 0.200 |
+| Max work-related expenses for child/dependent care credit with 2 children? | yes | 0.189 |
+| Simplified home office rate per sq ft and max deduction? | yes | 0.291 |
+| Standard deduction for MFJ in 2025? | yes | 0.403 |
+| How long must a self-employed person keep records for a business deduction? | yes | 0.264 |
+| What is the capital of Mongolia? | no | 0.686 |
+| How do I change the oil in a diesel engine? | no | 0.642 |
+| Who won the 1994 World Cup? | no | 0.795 |
+| What is the recommended dosage of ibuprofen for a headache? | no | 0.783 |
+| How do I write a for loop in Rust? | no | 0.700 |
 
 ## How I Used AI
 
