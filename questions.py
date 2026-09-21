@@ -23,11 +23,11 @@ names a target of "4 of 5", and four of three is not a thing.
 
 QUESTIONS = [
     # {"question": "...", "expects": "..."},
-    {"question": "", "expects": ""},
-    {"question": "", "expects": ""},
-    {"question": "", "expects": ""},
-    {"question": "", "expects": ""},
-    {"question": "", "expects": ""},
+    {"question": "What is the 2025 standard mileage rate for business use?", "expects": "70 cents/mile (P463)"},
+    {"question": "Max work-related expenses for child/dependent care credit with 2 children?", "expects": "$6,000 (P503)"},
+    {"question": "Simplified home office rate per sq ft and max deduction?", "expects": "$5/sqft, max $1,500 (P587)"},
+    {"question": "Standard deduction for MFJ in 2025?", "expects": "$31,500 (P501)"},
+    {"question": "How long must a self-employed person keep records for a business deduction?", "expects": "3 yrs from filing or 2 yrs from payment, whichever is later (P583/P587/P225)"},
 ]
 
 # Questions from a different world entirely. Your gate should refuse all five.
