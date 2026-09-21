@@ -237,9 +237,9 @@ more centrally.
 
      Milestone 5. -->
 
-**1.**
+**1.** I asked Claude to fix the chunker so it stops cutting sentences in half, and to deal with the irs_tax docs, which open with a YAML frontmatter block and a table-of-contents wall of `[link](#anchor)` lines that don't answer anything. It came back with a paragraph -> sentence -> line fallback (only drops to lines when a paragraph has no sentence punctuation at all, like a tax-bracket table) plus a regex strip for the frontmatter/TOC. I bumped `CHUNK_OVERLAP` from 120 to 150 after seeing chunks lose their lead-in sentence at the old value, and added a comment flagging that multi-chunk tables lose their header row after the first piece — I decided that wasn't worth building a table-aware splitter for the handful of tables in this corpus.
 
-**2.**
+**2.** For the relevance threshold, I asked Claude to help me read the distance table I'd already collected instead of just picking a number. Relevant questions were landing between 0.26 and 0.40, irrelevant ones between 0.64 and 0.80, a wide gap with 0.6 sitting right at its edge, closer to the irrelevant side. I moved `THRESHOLD` from 0.6 to 0.5, closer to the middle of that gap, and reran the eval to check accuracy didn't drop before keeping it.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
