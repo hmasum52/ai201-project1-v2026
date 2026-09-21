@@ -50,6 +50,10 @@ guides that a fixed-size chunker cuts straight through the middle of.
 
 28 documents · 15,901 characters · about 567 characters per document
 
+## `irs_tax`
+
+**IRS publications for individuals, small business owners, self-employed workers, farmers, and foreign nationals.** Twenty documents, each a PDF converted to text, covering standard deductions, medical expenses, depreciation, home office rules, and international tax treaties. The information is technically public but practically inaccessible: answers are fragmented across dozens of long, dense PDFs, and finding the right one requires already knowing which publication covers your situation.
+
 ## Bringing your own documents
 
 You're allowed to. Make a folder at `corpora/your_name/documents/`, put
