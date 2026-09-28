@@ -317,6 +317,38 @@ more centrally.
 
      Milestone 3. -->
 
+Only criterion 4 missed. **Stage: chunking**, in `chunker.py::split_documents`.
+
+The greedy packing loop (the `for unit in units` loop) treats every
+blank-line-separated block as one atomic unit — including a lone markdown
+heading line like `#### Diagnostic Devices`, which sits on its own between
+blank lines before its body paragraph. The loop decides where to close a
+chunk purely by character count (`len(candidate) > chunk_size`); it never
+checks whether the unit it just added is a heading that still needs its body
+to follow it. So whenever the 800-character budget runs out right after a
+heading unit and before that heading's body unit, the chunk closes with the
+bare heading as its last line. Nothing is actually lost — the overlap
+carry-forward reproduces the heading at the top of the next chunk — but the
+sampled chunk itself doesn't end in `.`, `?`, `!`, or a colon.
+
+That's the pattern behind 4 of the 5 failing chunks in the sample:
+`publication_15-T.md#0` (`## What's New`), `publication_17.md#1266`
+(`#### Amortizable Premium on Taxable Bonds`), `publication_502.md#43`
+(`#### Diagnostic Devices`), and `publication_519.md#133` (`#### Time
+Basis`) all end on a bare heading. One mechanism, not four separate bugs.
+
+The 5th failure (`publication_587.md#285`) is a related but distinct case:
+it ends mid alphabetical index/glossary entry (`Repairs,
+[Repairs.](#anchor)`). Same root cause — a character-count-only boundary
+with no look-ahead — but the content itself is a legitimate back-of-book
+index section (not TOC noise `ingest.py` should have stripped), and its
+one-line entries never end in sentence punctuation, so no chunk boundary
+through that section could satisfy the check.
+
+Criteria 1, 2, 3, and 5 all cleared their targets with room to spare (5/5
+against 4/5 or 5/5 targets), so I'm not tempted to tighten those — the
+margin suggests the targets were reasonable, not lucky.
+
 ## The Improvement
 
 **What I changed:**
