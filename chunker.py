@@ -30,6 +30,7 @@ from ingest import Document
 
 _PARAGRAPH_SPLIT = re.compile(r"\n\s*\n")
 _SENTENCE_SPLIT = re.compile(r"(?<=[.!?:])\s+")
+_HEADING = re.compile(r"^#{1,6}\s")
 
 
 @dataclass
@@ -139,11 +140,28 @@ def split_documents(documents: list[Document]) -> list[Chunk]:
 
     chunks: list[Chunk] = []
     for doc in documents:
+        paragraphs = [p.strip() for p in _PARAGRAPH_SPLIT.split(doc.text) if p.strip()]
+
+        # ponytail: a lone heading (own paragraph, blank line before its body)
+        # would otherwise be free to end up as the last unit the packer adds
+        # before a chunk closes, leaving the chunk ending on a bare heading.
+        # Merging it into the next paragraph keeps heading+body atomic so
+        # that can't happen. Doesn't handle back-to-back headings with no
+        # body between them — not seen in this corpus, not worth chasing.
+        merged_paragraphs: list[str] = []
+        i = 0
+        while i < len(paragraphs):
+            paragraph = paragraphs[i]
+            if _HEADING.match(paragraph) and i + 1 < len(paragraphs):
+                paragraph = f"{paragraph}\n\n{paragraphs[i + 1]}"
+                i += 2
+            else:
+                i += 1
+            merged_paragraphs.append(paragraph)
+
         units: list[str] = []
-        for paragraph in _PARAGRAPH_SPLIT.split(doc.text):
-            paragraph = paragraph.strip()
-            if paragraph:
-                units.extend(_split_paragraph(paragraph, chunk_size))
+        for paragraph in merged_paragraphs:
+            units.extend(_split_paragraph(paragraph, chunk_size))
 
         index = 0
         current = ""

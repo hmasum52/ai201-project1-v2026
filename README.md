@@ -351,12 +351,17 @@ margin suggests the targets were reasonable, not lucky.
 
 ## The Improvement
 
-**What I changed:**
+**What I changed:** In `chunker.py::split_documents`, a paragraph that is
+just a bare markdown heading (`^#{1,6}\s`) now gets merged with the
+paragraph immediately following it *before* either goes into the packer, so
+heading and body are always one atomic unit. Everything else — `_pack`,
+`_split_paragraph`, the overlap carry-forward, the function's name and
+return shape — is unchanged.
 
-**Why I picked it:**
-
-<!-- Connect it to a specific diagnosis above in one sentence. If you can't,
-     you picked a fix because it sounded impressive. -->
+**Why I picked it:** It's a direct fix for the mechanism in the diagnosis
+above: the packer closed a chunk purely on character count, with no
+look-ahead for "the unit I just added is a heading that needs its body" —
+that explained 4 of the 5 failing chunks in the sample.
 
 ### Run Log — After
 
