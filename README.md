@@ -413,6 +413,33 @@ improved criterion 4 without regressing anything else.
 
      Milestone 5. -->
 
+By the numbers in the "Run Log — After" table, nothing is missed — all five
+criteria are MET. But criterion 4's 9/10 isn't the same as "fixed": the
+heading-merge fix addressed 4 of the 5 mechanisms behind the "before" miss,
+not all 5. The back-of-book index/glossary section is still unhandled — I
+only got a 9/10 because this particular random sample drew just one index
+chunk (`publication_587.md#289`). Every one of the 20 publications ends with
+an index section built the same way (one-line entries, no sentence
+punctuation), so a different random draw that happened to land on two or
+three of those chunks instead of one could still come in under 8/10. The
+target is currently passing on sample luck as much as on the fix.
+
+**What I'd do about it:** detect the index-section pattern in
+`chunker.py::split_documents` — a run of consecutive short paragraphs with
+no sentence-ending punctuation but a trailing markdown link, which is
+structurally distinct from prose — and either merge the whole section into
+one chunk per document, or exclude it from consideration the way
+`ingest.py::clean_text` already excludes the frontmatter/TOC block at the
+top of each file.
+
+**Why I stopped here:** none of the 5 `QUESTIONS` or 5 `OUT_OF_SCOPE`
+questions would ever need an answer from an alphabetical index — it's
+navigation, not content, same category as the TOC noise already stripped in
+Milestone 1. Chasing criterion 4's literal wording (chunks end in
+punctuation) for a section nobody would ever retrieve from would be
+optimizing the metric instead of the actual pipeline, so I'm leaving it as a
+named, understood gap rather than building a special case for it now.
+
 ## What I'd Do Differently
 
 <!-- Knowing what you know now — which of your five criteria would you write
