@@ -456,3 +456,10 @@ depends partly on how many index chunks a random sample happens to draw,
 not purely on chunking quality. I'd rewrite it to exclude index/glossary
 sections from the sample (or count them separately), so the number actually
 measures the thing I can fix.
+
+
+## How I Used AI
+
+**1.** I asked Claude to work out which pipeline stage caused the criterion-4 miss (5/10 chunk-sample) instead of just re-chunking and hoping. It read `chunker.py::split_documents` and traced the failure to the packer closing chunks purely on character count, with no rule keeping a heading attached to its body — matching 4 of the 5 sampled failures, with the 5th (an index-page chunk) flagged as a different, unfixable case rather than folded into the same fix.
+
+**2.** For the fix itself, I asked for a plan before any code changed. Claude proposed merging a bare heading paragraph into the one after it before packing. I corrected one part of its verification plan: it initially treated one `run_eval.py --label after` invocation as enough, but I pointed out the output filename is timestamped to the minute, so I had it run three separate invocations spaced across clock minutes to get three distinct result files, matching how "before" was actually produced.
