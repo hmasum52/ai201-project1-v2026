@@ -268,11 +268,11 @@ more centrally.
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4/5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5/5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4/5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Chunks don't cut sentences in half | 8/10 | 5/10 | 5/10 | 5/10 | MISSED |
+| 5. Numbers in answers match the source | 5/5 | 5/5 | 5/5 | 5/5 | MET |
 
 <!-- Underneath, paste the REAL output for each criterion from one of your
      runs — the actual text your system produced, not a description of it.
