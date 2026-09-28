@@ -291,11 +291,11 @@ more centrally.
 
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunk contains the answer | MET | All 5 questions passed the gate with low distances and, across all 3 runs, the retrieved sources contained the correct figure (I checked each against the actual publication text) — 5/5 held every run, above the 4/5 target. |
+| 2 | Every answer names a source | MET | Every one of the 15 generated answers (5 questions × 3 runs) named at least one source document by filename — 5/5, no exceptions. |
+| 3 | Gate stops out-of-corpus questions | MET | Retrieval and the gate are deterministic (fixed threshold comparison), so one pass is the whole measurement: all 5 `OUT_OF_SCOPE` questions landed above 0.5 and were refused — 5/5, above the 4/5 target. |
+| 4 | Chunks don't cut sentences in half | MISSED | A 10-chunk sample from `app.py chunks -n 10` came back 5/10 ending in `.`, `?`, `!`, or a heading colon — below the 8/10 target, and it wasn't close. |
+| 5 | Numbers in answers match the source | MET | I grepped the source documents directly for every figure stated across all 15 answers ($31,500 MFJ deduction, 70¢ mileage, $5/300 sq ft home office, $6,000 dependent-care limit, 3-year record retention) — all matched exactly, every run. |
 
 ## Diagnoses
 
