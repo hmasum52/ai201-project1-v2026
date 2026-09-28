@@ -446,3 +446,13 @@ named, understood gap rather than building a special case for it now.
      differently, and why?
 
      Milestone 5. -->
+
+Criterion 4's wording. "At least 8 of 10 chunks end in `.`, `?`, `!`, or a
+heading colon" lumps two different things into one number: real chunking
+bugs (bare-heading cuts, now fixed) and back-of-book index sections, which
+are legitimate content that will never end in sentence punctuation no
+matter how good the chunker is. That means the 8/10 pass/fail outcome
+depends partly on how many index chunks a random sample happens to draw,
+not purely on chunking quality. I'd rewrite it to exclude index/glossary
+sections from the sample (or count them separately), so the number actually
+measures the thing I can fix.
