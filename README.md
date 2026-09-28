@@ -370,11 +370,11 @@ that explained 4 of the 5 failing chunks in the sample.
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
-| 4. | | | | | |
-| 5. | | | | | |
+| 1. Retrieved chunk contains the answer | 4/5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5/5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4/5 | 5/5 | 5/5 | 5/5 | MET |
+| 4. Chunks don't cut sentences in half | 8/10 | 9/10 | 9/10 | 9/10 | MET |
+| 5. Numbers in answers match the source | 5/5 | 5/5 | 5/5 | 5/5 | MET |
 
 **Did it help?**
 
@@ -384,6 +384,24 @@ that explained 4 of the 5 failing chunks in the sample.
      tell.
 
      Milestone 4. -->
+
+Yes. Criterion 4 went from 5/10 to 9/10 on a fresh `app.py chunks -n 10`
+sample, clearing the 8/10 target — all 4 bare-heading cuts from the "before"
+sample (`## What's New`, `#### Amortizable Premium on Taxable Bonds`,
+`#### Diagnostic Devices`, `#### Time Basis`) are gone; re-sampling the same
+document positions now shows each of those chunks ending in a real sentence.
+The one remaining miss is the back-of-book index chunk
+(`publication_587.md#289`), the known limitation called out in the
+diagnosis — its one-line entries never end in sentence punctuation no
+matter where the boundary falls, so it wasn't in scope for this fix.
+
+Re-indexing did shift chunk boundaries throughout the corpus — e.g. the
+mileage-rate question's best distance moved from 0.1998 to 0.2178, and the
+"capital of Mongolia" out-of-scope distance moved from 0.686 to 0.750 — but
+none of those shifts crossed the 0.5 gate, and the cited sources and stated
+figures for all 5 `QUESTIONS` were identical across all 3 "after" runs.
+Criteria 1, 2, 3, and 5 held at the same pass rate as "before": the fix
+improved criterion 4 without regressing anything else.
 
 ## What's Still Broken
 
